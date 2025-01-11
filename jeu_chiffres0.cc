@@ -21,19 +21,23 @@
 */
 
 int main() {
-	srand((unsigned int)time(0));
 	
 	sf::RenderWindow window(sf::VideoMode(800, 600), "Jeu de chiffres");
     window.setFramerateLimit(60);
-	NumberScene ns(NVALEUR, window);
 	
     // Boucle principale
     
     // on essaye de regénérer une nouvelle partie ?, le score exact à la fin, nouvelle interface (très dur ca)
     // Version où l'ordre de priorité n'existe pas, ca veut dire que ca fonctionne par parenthèses 
     // ex : 3,-,4,*,5 <=> (3-4)*5, j'avoue j'avais pas prévu ce cas de figure
-    while (window.isOpen()) {
-        ns.NumberGame(window);
+    
+    bool replay = true;
+    
+    while (replay) {
+    	srand((unsigned int)time(0));
+    	NumberScene ns(NVALEUR, window);
+    	//std::cout << "test" << std::endl;
+        replay = ns.NumberGame(window);
     }
 
     return 0;

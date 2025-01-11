@@ -23,15 +23,15 @@ class NumberScene {
 	protected:
 		//sf::RenderWindow window;
 	
-		int butNumber;
+		size_t butNumber;
 		std::vector<int> poss_num;
     	std::vector<int> numbers;
 		std::vector<NumberButton> numberButtons;
 		const int target = 100 + rand() % 900;
 		
 		std::vector<OperationButton> operationButtons;
-    	ActionButton validateButton{"Valider", 600, 500, 100, 50, globalFont};
-    	ActionButton clearButton{"Effacer", 700, 500, 100, 50, globalFont};
+    	ActionButton validateButton{"Valider", 550, 500, 100, 50, globalFont};
+    	ActionButton clearButton{"Effacer", 675, 500, 100, 50, globalFont};
     	
     	sf::Font globalFont;
     	sf::Text targetText;
@@ -39,24 +39,22 @@ class NumberScene {
     	sf::Text attentionText;
     	sf::Text scoreText;
     	
-    	sf::Sprite sprite1;
-    	sf::Sprite sprite2;
+    	sf::Texture texture1;
+    	sf::Texture texture2;
     	
-    	int b;
-    	int premier_tour;
     	std::string op;
     	int currentResult;
     	int score;
-    	int fin;
+    	bool fin;
 		
 	public:
-		NumberScene(int num, sf::RenderWindow& win);
+		NumberScene(size_t num, sf::RenderWindow& win);
 		std::vector<int> generateRandomNumbers(size_t count, size_t min, size_t max);
-		void AddNumberButton();
-		void NumberGame(sf::RenderWindow& window);
+		void AddNumberButton(int nb);
+		bool NumberGame(sf::RenderWindow& window);
 };
 
-NumberScene::NumberScene(int num, sf::RenderWindow& window) {
+NumberScene::NumberScene(size_t num, sf::RenderWindow& window) {
 	butNumber = num;
 	
     if (!globalFont.loadFromFile("arial.ttf")) {
@@ -67,9 +65,9 @@ NumberScene::NumberScene(int num, sf::RenderWindow& window) {
 	poss_num = {1,2,3,4,5,6,7,8,9,10,15,25,50,100};
     numbers = this->generateRandomNumbers(butNumber, 1, 100); // NVALEUR : entre 1 et 14
 
-    for (int i = 0; i < butNumber; ++i) {
+    for (size_t i = 0; i < butNumber; ++i) {
     	// 6 boutons max par rangée
-        numberButtons.emplace_back(numbers[i], 50 + (i%6) * 120, 200 + (i/6)*100, 100, 50, globalFont); // en gros équivalent à push_back en construisant directement une instance de NumberButton (plus simple pour les disposer)
+        numberButtons.emplace_back(numbers[i], 50 + (i%6) * 120, 200 + (i/6)*75, 100, 50, globalFont); // en gros équivalent à push_back en construisant directement une instance de NumberButton (plus simple pour les disposer)
     }
     
     operationButtons = {
@@ -96,30 +94,21 @@ NumberScene::NumberScene(int num, sf::RenderWindow& window) {
     attentionText.setFillColor(sf::Color::Red);
     
     scoreText = sf::Text("Score : -1", globalFont, 40);
-	scoreText.setPosition(250, 100); // Centrer
+	scoreText.setPosition(250, 50); // Centrer
 	scoreText.setFillColor(sf::Color::Black);
 	
-	sf::Texture texture1;
     if (!texture1.loadFromFile("incroyable.png")) { // l'image doit etre dans le meme répertoire
         std::cout << "Erreur 1" << std::endl;
         //return -1;
     }
-    sprite1.setTexture(texture1);
-    sprite1.setPosition(250, 150);
-    
-	sf::Texture texture2;
     if (!texture2.loadFromFile("tables_multi.png")) { // l'image doit etre dans le meme répertoire
         std::cout << "Erreur 2" << std::endl;
         //return -1;
     }
-    sprite2.setTexture(texture2);
-    sprite2.setPosition(200, 150);
-    sprite2.scale(0.5f, 0.5f);
     
-    premier_tour = 1;
-    currentResult = 0;
-    score = -1;
-    fin = 0;
+    op = "+";
+    currentResult = -1;
+    fin = false;
 }
 
 std::vector<int> NumberScene::generateRandomNumbers(size_t count, size_t min, size_t max) { 
@@ -132,40 +121,53 @@ std::vector<int> NumberScene::generateRandomNumbers(size_t count, size_t min, si
     return numbers;
 }
 
-void NumberScene::AddNumberButton() {
-
-
+void NumberScene::AddNumberButton(int nb) {
+	size_t len = numberButtons.size();
+	numberButtons.emplace_back(nb, 50 + (len%6) * 120, 200 + (len/6)*75, 100, 50, globalFont);
 }
 
-void NumberScene::NumberGame(sf::RenderWindow& window) {
-    sf::Event event;
+bool NumberScene::NumberGame(sf::RenderWindow& window) {
+	NumberButton* activeNumberButton = &numberButtons[0];
+	OperationButton* activeOperationButton = &operationButtons[0];
+	(*activeOperationButton).new_shape_color(sf::Color::Green);
+
+	sf::Event event;
+    while (window.isOpen()) {
         while (window.pollEvent(event)) { // Quand on ne fait pas d'actions, cela sort de la boucle
             if (event.type == sf::Event::Closed) { // Quand on ferme la fenêtre
                 window.close();
+                return 0;
             }
 
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) { // Evènement : Clique gauche sur la souris
+            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) { // Evènement : Clique gauche sur la souris
                 sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
                 for (auto& btn : numberButtons) { // auto = NumberButton
-                    if (btn.isClicked(mousePos) && btn.getShapeColor() == sf::Color::Blue) { // Bouton bleue utilisable qu'une seule fois
-                    	btn.new_shape_color(sf::Color::Red); 
-                    	if (premier_tour){
-                    		premier_tour = 0; 
-                    		currentResult = btn.getValue();
-                    	}
-                        else{
-                        	// Note : si on appuie plusieures fois sur un numéro, ca va écraser b à chaque fois, et l'opération correspond au dernier bouton opération cliqué
-                        	// A voir comment on pourrait faire mieux mais bon 
-                        	b = btn.getValue();
+                    if (btn.isClicked(mousePos) && btn.isActive) { // Bouton bleue utilisable qu'une seule fois
+                    	//btn.new_shape_color(sf::Color::Red);
+                    	
+                        if (currentResult == -1) { //Premier chiffre du calcul
+                        	currentResult = btn.getValue();
+                            resultText.setString("Resultat: " + std::to_string(currentResult));
+                            btn.new_shape_color(sf::Color::Green);
+                            activeNumberButton = &btn;
+                        }
+                        else { //Deuxième chiffre du calcul
+                        	int b = btn.getValue();
+                        	std::cout << currentResult << " et " << b  << std::endl;
                         	if (op == "+") currentResult += b;
-                            if (op == "-") currentResult -= b;
+							if (op == "-") currentResult -= b;
                             if (op == "*") currentResult *= b;
                             if (op == "/" && b != 0 && currentResult % b == 0) currentResult /= b;
-                            score = abs(target-currentResult);
-                            resultText.setString("Resultat: " + std::to_string(currentResult));
+                            else {
+                            	(*activeNumberButton).new_shape_color(sf::Color::Blue);
+                            }
+                            AddNumberButton(currentResult);
+                            currentResult = -1;
+                            resultText.setString("Resultat: 0");
+                            (*activeNumberButton).new_shape_color(sf::Color::Red);
+                            btn.new_shape_color(sf::Color::Red);
                         }
-                        //std::cout << "Nombre : " << btn.getValue() << std::endl;
                         break;
                     }
                 }
@@ -173,20 +175,23 @@ void NumberScene::NumberGame(sf::RenderWindow& window) {
                 for (auto& btn : operationButtons) { // auto = OperationButton
                     if (btn.isClicked(mousePos)) {
                         op = btn.getOperation();
-                        //std::cout << "Operation : " << btn.getOperation() << std::endl;
+                        (*activeOperationButton).new_shape_color(sf::Color::Blue);
+                        btn.new_shape_color(sf::Color::Green);
+                        activeOperationButton = &btn;
                         break;
                     }
                 }
 
-                if (validateButton.isClicked(mousePos)) fin = 1; // Valider = fin du jeu
+                if (validateButton.isClicked(mousePos)) {
+                	fin = true; // Valider = fin du jeu
+                	score = abs(target-currentResult);
+                }
 
                 // Tout réinitialiser
                 if (clearButton.isClicked(mousePos)) {
-                    score = -1;
-                    premier_tour = 1;
-                    currentResult = 0;
-                    b = 0;
+                    currentResult = -1;
                     op = "";
+                    while(numberButtons.size() > butNumber) numberButtons.erase(numberButtons.end());
                     for (auto& btn : numberButtons) {
                     	btn.new_shape_color(sf::Color::Blue); 
                     }
@@ -196,45 +201,69 @@ void NumberScene::NumberGame(sf::RenderWindow& window) {
         }
 		
 		// ------- Pendant le jeu
-		if (fin == 0){
-		    window.clear(sf::Color::White);
+		
+		window.clear(sf::Color::White);
 
 		    // Important pour afficher les textes
-		    window.draw(targetText);
-		    window.draw(resultText);
-		    window.draw(attentionText);
+		window.draw(targetText);
+		window.draw(resultText);
+		window.draw(attentionText);
 
 		    // Pour les boutons
-		    for (auto& btn : numberButtons) {
-		        btn.draw(window);
-		    }
-		    for (auto& btn : operationButtons) {
-		        btn.draw(window);
-		    }
-		    validateButton.draw(window);
-		    clearButton.draw(window);
-		    window.display();
-    	}
-        
-        // -------- Fin
-        else{
-		    if (score >= 0 && score <= 10){
-		    	window.clear(sf::Color::Green);
-		    	window.draw(sprite1);
-		    }
-		    if (score > 10 && score <= 25) window.clear(sf::Color::Yellow);
-		    if (score > 25 && score <= 100) window.clear(sf::Color(255, 165, 0, 0)); // Orange (j'ai trouvé sur un site) : R(Red), G(Green), B(Blue), A(alpha) = transparence
-		    // https://www.webfx.com/web-design/color-picker/color-chart/ si tu veux regarder d'autres couleurs
-		    if (score > 100){
-		    	window.clear(sf::Color::Red);
-		    	window.draw(sprite2);
-		    }
-		    if (score == -1) window.clear(sf::Color::White);
-		    scoreText.setString("SCORE : " + std::to_string(score));
-		    window.draw(scoreText);
-		    
-		    window.display();
-        }
+		for (auto& btn : numberButtons) {
+		    btn.draw(window);
+		}
+		for (auto& btn : operationButtons) {
+		    btn.draw(window);
+		}
+		validateButton.draw(window);
+		clearButton.draw(window);
+		window.display();
+		
+		// -------- Fin
+		if (fin) {
+			sf::Sprite sprite;
+			if (!score){
+				window.clear(sf::Color::Green);
+				sprite.setTexture(texture1);
+    			sprite.setPosition(250, 100);
+				window.draw(sprite);
+			}
+			else if (score <= 10) {
+				window.clear(sf::Color::Yellow);
+			}
+			else if (score <= 50) {
+				window.clear(sf::Color(255, 165, 0, 0)); // Orange (j'ai trouvé sur un site) : R(Red), G(Green), B(Blue), A(alpha) = transparence
+				// https://www.webfx.com/web-design/color-picker/color-chart/ si tu veux regarder d'autres couleurs
+			}
+			else{
+				window.clear(sf::Color::Red);
+				sprite.setTexture(texture2);
+    			sprite.setPosition(200, 100);
+    			sprite.scale(0.5f, 0.5f);
+				window.draw(sprite);
+			}
+			
+			if (score == -1) window.clear(sf::Color::White);
+			scoreText.setString("SCORE : " + std::to_string(score));
+			window.draw(scoreText);
+				    
+			ActionButton replayButton{"Rejouer", 350, 540, 100, 50, globalFont}; //Bouton pour relancer une partie
+			replayButton.draw(window);
+				    
+			window.display();
+			while(!replayButton.isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+				//std::cout << "hehehaha" << std::endl;
+				if (window.pollEvent(event) && (event.type == sf::Event::Closed)) {
+                	window.close();
+                	return 0;
+            	}
+			}; //On attend que le bonton soit pressé ou que la fenêtre soit fermée
+				
+			return 1;
+		}
+	}
+	return 0;
 }
 
 
