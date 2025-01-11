@@ -13,6 +13,9 @@ class Button {
 		sf::Text text;
 
 	public:
+		Button() {
+			shape.setPosition(0, 0);
+		}
 		Button(const std::string& label, float x, float y, float width, float height, sf::Font& font) { // pour font SFML n'autorise pas la copie !
 		    shape.setSize(sf::Vector2f(width, height));
 		    shape.setPosition(x, y);
@@ -55,5 +58,6 @@ class OperationButton : public Button {
 // Je vois pas trop son intéret (surtout pour le bouton valider, il y a probablement rien à faire)
 class ActionButton : public Button {
 	public:
+		ActionButton() : Button() {}
 		ActionButton(const std::string& label, float x, float y, float width, float height, sf::Font& font) : Button(label, x, y, width, height, font) {}
 };
