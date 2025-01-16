@@ -1,11 +1,13 @@
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
-#include "boutons.hh"
+
+#include <SFML/Graphics.hpp>
+
+#include "buttons.hh"
 #include "scenes.hh"
 
 // g++ -Wall jeu_chiffres0.cc -o jeu_chiffres0 -lsfml-graphics -lsfml-window -lsfml-system
@@ -36,7 +38,6 @@ int main() {
     while (replay) {
     	srand((unsigned int)time(0));
     	NumberScene ns(NVALEUR, window);
-    	//std::cout << "test" << std::endl;
         replay = ns.NumberGame(window);
     }
 
