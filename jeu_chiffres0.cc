@@ -8,7 +8,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "buttons.hh"
+
 #include "scenes.hh"
+#include "numberscenes.hh"
 
 // g++ -Wall jeu_chiffres0.cc -o jeu_chiffres0 -lsfml-graphics -lsfml-window -lsfml-system
 
