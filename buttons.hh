@@ -12,15 +12,18 @@ class Button {
 	protected:
 		sf::RectangleShape shape;
 		sf::Text text;
+		/*------------------------------------------*/
 		short _state;
 	public:
 		Button(const std::string& label, float x, float y, float width, float height, sf::Font& font);
-		// A voir si on ajoute d'autres fonctions, j'ai mis seulement celles dont j'avais besoin
+		/*------------------------------------------*/
 		void draw(sf::RenderWindow& window) {
 		    window.draw(shape);
 		    window.draw(text);
 		}
+		/*------------------------------------------*/
 		bool isClicked(const sf::Vector2f& mousePos);
+		/*------------------------------------------*/
 		std::string getLabel() const {return text.getString();}
 		sf::Color getShapeColor() const {return shape.getFillColor();}
 		short getState() const {return _state;}

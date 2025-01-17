@@ -30,6 +30,10 @@ class NumberScene : public Scene {
     	sf::Text resultText;
     	sf::Text attentionText;
     	/*------------------------------------------*/
+    	static const std::string _imageName;
+    	static sf::Texture bgTexture;
+    	sf::Sprite sprite;
+    	/*------------------------------------------*/
     	int activeNumberButton;
 		int activeOperationButton;
     	/*------------------------------------------*/
@@ -39,6 +43,14 @@ class NumberScene : public Scene {
 		
 	public:
 		NumberScene(size_t num, sf::RenderWindow& win);
+		/*------------------------------------------*/
+		static sf::Texture loadTextures() {
+			sf::Texture t;
+			if (!t.loadFromFile(_imageName)) { // l'image doit etre dans le meme répertoire
+        		std::cout << "Erreur : image non disponible (" << _imageName << ")" << std::endl;
+    		}
+    		return t;
+		}
 		/*------------------------------------------*/
 		std::vector<int> generateRandomNumbers(size_t count, size_t min, size_t max);
 		/*------------------------------------------*/
@@ -57,22 +69,26 @@ class NumberScene : public Scene {
 		bool NumberGame(sf::RenderWindow& window);
 };
 
+const std::string NumberScene::_imageName = "Number_BG.png";
+sf::Texture NumberScene::bgTexture = loadTextures();
+
 NumberScene::NumberScene(size_t num, sf::RenderWindow& window) {
 	butNumber = num;
-	
 	poss_num = {1,2,3,4,5,6,7,8,9,10,15,25,50,100};
     numbers = this->generateRandomNumbers(butNumber, 1, 100); // NVALEUR : entre 1 et 14
 
-    for (size_t i = 0; i < butNumber; ++i) { // 6 boutons max par rangée
-        numberButtons.emplace_back(numbers[i], 50 + (i%6) * 120, 200 + (i/6)*75, 100, 50, globalFont);
-    }
+    for (size_t i = 0; i < butNumber; ++i) numberButtons.emplace_back(numbers[i], 50 + (i%6) * 120, 200 + (i/6)*75, 100, 50, globalFont); // 6 boutons max par rangée
     
     operationButtons.push_back(new AdditionButton(50, 500, 50, 50, globalFont));
     operationButtons.push_back(new SubstractionButton(110, 500, 50, 50, globalFont));
     operationButtons.push_back(new MultiplicationButton(170, 500, 50, 50, globalFont));
     operationButtons.push_back(new DivisionButton(230, 500, 50, 50, globalFont));
     
-    // On peut ajouter d'autres textes
+	sprite.setTexture(bgTexture);
+    //sprite.setPosition(std::get<0>(t),std::get<1>(t));
+    sprite.scale(8, 8);
+	window.draw(sprite);
+    
     targetText = sf::Text("Objectif: " + std::to_string(target), globalFont, 24);
     targetText.setPosition(50, 20);
     targetText.setFillColor(sf::Color::White);
@@ -122,24 +138,24 @@ void NumberScene::NumberClickCheck(sf::Vector2f mousePos) {
             if (currentResult == -1) { //Premier chiffre du calcul
                 currentResult = btn.getValue();
                 resultText.setString("Resultat: " + std::to_string(currentResult));
-                btn.setState(1);
+                numberButtons[btn.getId()].setState(1);
             	activeNumberButton = btn.getId();
-            	std::cout << "Step 1" << std::endl;
-            	std::cout << "() " << activeNumberButton << " " << activeOperationButton << std::endl;
+            	//std::cout << "Step 1" << std::endl;
+            	//std::cout << "() " << activeNumberButton << " " << activeOperationButton << std::endl;
             }
             else { //Deuxième chiffre du calcul
-                std::cout << "() " << activeNumberButton << " " << activeOperationButton << std::endl;
+                //std::cout << "() " << activeNumberButton << " " << activeOperationButton << std::endl;
                 currentResult = operationButtons[activeOperationButton]->compute(&numberButtons[activeNumberButton], &btn);
-                std::cout << "currentResult = " << currentResult << std::endl;
+                //std::cout << "currentResult = " << currentResult << std::endl;
                 if (currentResult != -1) {
                     AddNumberButton(currentResult);
                     currentResult = -1;
                     numberButtons[activeNumberButton].setState(2);
-                    btn.setState(2);
+                    numberButtons[btn.getId()].setState(2);
                 	//std::cout << "Step 2" << std::endl;
                 }
             	resultText.setString("Resultat: 0");
-            	//std::cout << "{} " << numberButtons[activeNumberButton].getState() << " " << btn.getState() << std::endl;
+            	//std::cout << "{} " << numberButtons[activeNumberButton].getState() << "|" << numberButtons[activeNumberButton].getId() << " " << btn.getState() << "|" << btn.getId() << std::endl;
             }
             break;
         }
@@ -178,16 +194,19 @@ void NumberScene::OnClick(sf::Event event) {
 	sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
     NumberClickCheck(mousePos);
-
+	
 	OperationClickCheck(mousePos);
-
+	
     ActionClickCheck(mousePos);
+    //for (auto& btn : numberButtons) std::cout << "[" << btn.getState() << "]";
+	//std::cout << std::endl;
 }
 
 void NumberScene::UpdateWindow(sf::RenderWindow& window) {
 	window.clear(sf::Color(50, 20, 50, 0));
 
 	// Important pour afficher les textes
+	window.draw(sprite);
 	window.draw(targetText);
 	window.draw(resultText);
 	window.draw(attentionText);
