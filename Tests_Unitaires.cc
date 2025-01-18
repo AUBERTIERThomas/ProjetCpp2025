@@ -13,9 +13,10 @@
 
 void CHECK(bool cond) {
 	assert(cond);
-	std::cout << ".";
+	std::cout << "."; // Un point est affiché par nombre de test passé pour chaque section
 }
 
+/* TestCase fait maison. Pas soucis de ressemblance, on utilise une fonction CHECK mais le vrai test est fait via un assert. */
 int main() {
 
 	std::cout << "--------------------------------------------" << std::endl;
@@ -53,7 +54,7 @@ int main() {
   CHECK(mul.compute(&n_but_1,&n_but_2) == 420);
   CHECK(mul.compute(&n_but_3,&n_but_4) == -5);
   CHECK(div.compute(&n_but_1,&n_but_3) == 2);
-  CHECK(div.compute(&n_but_2,&n_but_3) == -1);
+  CHECK(div.compute(&n_but_2,&n_but_3) == -1); // Division non entière
   std::cout << std::endl << "   OK" << std::endl;
   
   std::cout << "--------------------------------------------" << std::endl;

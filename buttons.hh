@@ -10,61 +10,46 @@
 
 class Button {
 	protected:
-		sf::RectangleShape shape;
 		sf::Text text;
+		sf::RectangleShape shape;
 		/*------------------------------------------*/
 		short _state;
 	public:
 		Button(const std::string& label, float x, float y, float width, float height, sf::Font& font);
 		/*------------------------------------------*/
-		void draw(sf::RenderWindow& window) {
-		    window.draw(shape);
-		    window.draw(text);
-		}
+		virtual void draw(sf::RenderWindow& window) = 0; // L'affichage est géré différament selon les classes enfant
 		/*------------------------------------------*/
 		bool isClicked(const sf::Vector2f& mousePos);
 		/*------------------------------------------*/
 		std::string getLabel() const {return text.getString();}
-		sf::Color getShapeColor() const {return shape.getFillColor();}
 		short getState() const {return _state;}
-		void setState(short a);
 };
 
-Button::Button(const std::string& label, float x, float y, float width, float height, sf::Font& font) { // pour font SFML n'autorise pas la copie !
+Button::Button(const std::string& label, float x, float y, float width, float height, sf::Font& font) { // Pour font SFML n'autorise pas la copie !
+	/* Rectangle (forme du bouton) */
 	shape.setSize(sf::Vector2f(width, height));
 	shape.setPosition(x, y);
-	shape.setFillColor(sf::Color::Blue);
+	shape.setFillColor(sf::Color(255, 255, 255, 0)); // Si le rectangle de couleur est remplacé par une texture, on le rend transparent
 	
-	int l = label.length();
-	
+	/* Libellé du bouton */
 	text.setFont(font); 
 	text.setString(label);
 	text.setCharacterSize(20);
 	text.setFillColor(sf::Color::White);
-	text.setPosition(x+width/2-6*l,y+12); // pour que le texte soit bien à l'intérieur du bouton
-		    
+	
+	/* Par défaut, un bouton comment à l'état 0 (non activé) */    
 	_state = 0;
 }
 
 bool Button::isClicked(const sf::Vector2f& mousePos) {
-	if (getState())
+	if (getState()) // Ne peut être appuyé que si son état est à 0
 		return 0;
 	if (shape.getGlobalBounds().contains(mousePos)){
-		_state = 1;
-		std::cout << "huh" << std::endl;
+		_state = 1; // Le bonton passe à l'état 1 (activé)
 		return 1;
 	}
 	return 0;
 }
-
-void Button::setState(short a) {
-	_state = a;
-	switch (_state) {
-		case 0 : shape.setFillColor(sf::Color::Blue); break;
-		case 1 : shape.setFillColor(sf::Color(20, 175, 20, 255)); break;
-		case 2 : shape.setFillColor(sf::Color::Red);
-	}
-};
 
 
 
