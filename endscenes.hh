@@ -13,6 +13,7 @@
 
 class EndScene : public Scene {
 	protected:
+		int imageId;
 		std::string _imageName;
 		const std::vector<std::string> imageNames = {"incroyable.png","incroyable.png","incroyable.png","tables_multi.png"};
 		const std::map<std::string,std::tuple<int,int>> imageLoc = {{imageNames[0],{250, 100}}, {imageNames[1],{250,100}}, {imageNames[2],{250,100}}, {imageNames[3],{200, 100}}};
@@ -26,12 +27,13 @@ class EndScene : public Scene {
 		/*------------------------------------------*/
 		bool scoreMenu(sf::RenderWindow& window);
 		void displayImage(sf::RenderWindow& window);
+		/*------------------------------------------*/
+		int getGrade() const {return imageId;}
 		
 		
 };
 
 EndScene::EndScene(int score, sf::RenderWindow& window) {
-	int imageId;
 	if (!score) {imageId = 0; window.clear(sf::Color::Green);}
 	else if (score <= 10) {imageId = 1; window.clear(sf::Color::Yellow);}
 	else if (score <= 50) {imageId = 2; window.clear(sf::Color(255, 165, 0, 0));} // Orange (j'ai trouvé sur un site) : R(Red), G(Green), B(Blue), A(alpha) = transparence

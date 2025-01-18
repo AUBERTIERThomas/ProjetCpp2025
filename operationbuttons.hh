@@ -17,7 +17,6 @@ class OperationButton : public Button {
 		std::string operation;
 	public:
 		OperationButton(std::string operation, float x, float y, float width, float height, sf::Font& font) : Button(operation, x, y, width, height, font), operation(operation) {_id = _cpt_id; _cpt_id++;}
-		//~OperationButton() {_cpt_id--;};
 		std::string getOperation() const {return operation;}
 		int getId() const {return _id;}
 		void setGlobalId(int gid) const {_cpt_id = gid;}

@@ -37,7 +37,6 @@ class NumberButton : public Button {
 				t.loadFromFile(imageNames[i]);
 				tL.push_back(t);
 			}
-			std::cout << "huh" << std::endl;
 			return tL;
 		}
 		/*------------------------------------------*/
@@ -60,6 +59,6 @@ std::vector<sf::Texture> NumberButton::textureList = NumberButton::loadTextures(
 
 void NumberButton::setState(short a) {
 	_state = a;
-	std::cout << "ewe " << a << " et " << _id << " et " << imageNames[a] << std::endl;
+	//std::cout << "ewe " << a << " et " << _id << " et " << imageNames[a] << std::endl;
 	sprite.setTexture(textureList[a]);
 };

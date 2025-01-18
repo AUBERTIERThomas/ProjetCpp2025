@@ -23,8 +23,8 @@ class NumberScene : public Scene {
 		const int target = 100 + rand() % 900;
 		/*------------------------------------------*/
 		std::vector<OperationButton*> operationButtons;
-    	ActionButton validateButton{"Valider", 550, 500, 100, 50, globalFont};
-    	ActionButton clearButton{"Effacer", 675, 500, 100, 50, globalFont};
+    	ActionButton validateButton{"Valider", 500, 500, 100, 50, globalFont};
+    	ActionButton clearButton{"Effacer", 650, 500, 100, 50, globalFont};
     	/*------------------------------------------*/
     	sf::Text targetText;
     	sf::Text resultText;
@@ -52,6 +52,8 @@ class NumberScene : public Scene {
     		return t;
 		}
 		/*------------------------------------------*/
+		size_t getButNumber() const {return numberButtons.size();}
+		/*------------------------------------------*/
 		std::vector<int> generateRandomNumbers(size_t count, size_t min, size_t max);
 		/*------------------------------------------*/
 		void AddNumberButton(int nb);
@@ -67,6 +69,9 @@ class NumberScene : public Scene {
 		void UpdateWindow(sf::RenderWindow& window);
 		/*------------------------------------------*/
 		bool NumberGame(sf::RenderWindow& window);
+		/*------------------------------------------*/
+		friend std::ostream& operator<< (std::ostream& stream, NumberScene& ns);
+		NumberButton& operator[] (size_t i) {return numberButtons[i];}
 };
 
 const std::string NumberScene::_imageName = "Number_BG.png";
@@ -85,7 +90,6 @@ NumberScene::NumberScene(size_t num, sf::RenderWindow& window) {
     operationButtons.push_back(new DivisionButton(230, 500, 50, 50, globalFont));
     
 	sprite.setTexture(bgTexture);
-    //sprite.setPosition(std::get<0>(t),std::get<1>(t));
     sprite.scale(8, 8);
 	window.draw(sprite);
     
@@ -104,6 +108,13 @@ NumberScene::NumberScene(size_t num, sf::RenderWindow& window) {
     
     currentResult = -1;
     fin = false;
+}
+
+std::ostream& operator<< (std::ostream& stream, NumberScene& ns) {
+	stream << "Boutons : ";
+	for (size_t i = 0; i < ns.getButNumber(); i++)
+		stream << "[" << ns[i].getValue() << "] ";
+	return stream;
 }
 
 std::vector<int> NumberScene::generateRandomNumbers(size_t count, size_t min, size_t max) { 

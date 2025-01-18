@@ -11,8 +11,9 @@ cestincroyable.out :
 jouer: cestincroyable.out
 	./cestincroyable.out
 
-#%.o: %.cc
-#	$(CC) $(CCFLAGS) -I../ -o $@ -c $<
+test : 
+	$(CC) $(CCFLAGS) Tests_Unitaires.cc -o  tu.out -lsfml-graphics -lsfml-window -lsfml-system
+	./tu.out
 
 clean :
-	rm -f $(OBJ_TEST) cestincroyable.out
+	rm -f $(OBJ_TEST) *.out
