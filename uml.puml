@@ -1,0 +1,219 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+class ActionButton {
+	+ActionButton(const std::string& label, float x, float y, float width, float height, sf::Font& font, const int imageId, const int dec)
+	+isClicked(const sf::Vector2f& mousePos) : bool
+	#sprite : sf::Sprite
+	#{static} imageNames : static const std::vector<std::string>
+	#{static} textureList : static std::vector<sf::Texture>
+	+{static} loadTextures() : std::vector<sf::Texture>
+	+draw(sf::RenderWindow& window) : void
+}
+
+
+class AdditionButton {
+	+AdditionButton(float x, float y, float width, float height, sf::Font& font)
+	+compute(NumberButton* a, NumberButton* b) : int
+}
+
+
+abstract class Button {
+	+Button(const std::string& label, float x, float y, float width, float height, sf::Font& font)
+	+isClicked(const sf::Vector2f& mousePos) : bool
+	#shape : sf::RectangleShape
+	#text : sf::Text
+	#_state : short
+	+getState() : short {query}
+	+getLabel() : std::string {query}
+	+{abstract} draw(sf::RenderWindow& window) : void
+}
+
+
+class DivisionButton {
+	+DivisionButton(float x, float y, float width, float height, sf::Font& font)
+	+compute(NumberButton* a, NumberButton* b) : int
+}
+
+
+class EndScene {
+	+EndScene(int score, sf::RenderWindow& window)
+	+scoreMenu(sf::RenderWindow& window) : bool
+	#{static} imageData : const std::map<std::string, std::tuple<int, int, float>>
+	#{static} imageNames : const std::vector<std::string>
+	+getGrade() : int {query}
+	#imageId : int
+	#scoreText : sf::Text
+	#texture : sf::Texture
+	#_imageName : std::string
+}
+
+
+class MultiplicationButton {
+	+MultiplicationButton(float x, float y, float width, float height, sf::Font& font)
+	+compute(NumberButton* a, NumberButton* b) : int
+}
+
+
+class NumberButton {
+	+NumberButton(int value, float x, float y, float width, float height, sf::Font& font)
+	#_id : int
+	+getId() : int {query}
+	+getValue() : int {query}
+	-value : int
+	#sprite : sf::Sprite
+	#{static} imageNames : static const std::vector<std::string>
+	#{static} _cpt_id : static int
+	#{static} textureList : static std::vector<sf::Texture>
+	+{static} loadTextures() : std::vector<sf::Texture>
+	+draw(sf::RenderWindow& window) : void
+	+setGlobalId(int gid) : void {query}
+	+setState(short a) : void
+}
+
+
+class NumberScene {
+	+NumberScene(size_t num, sf::RenderWindow& window)
+	#"Effacer" : ActionButton clearButton
+	#"Valider" : ActionButton validateButton
+	+operator[](size_t i) : NumberButton&
+	+NumberGame(sf::RenderWindow& window) : bool
+	#fin : bool
+	#target : const int
+	+ : const std::string NumberScene::_imageName
+	#activeNumberButton : int
+	#activeOperationButton : int
+	#currentResult : int
+	#score : int
+	#sprite : sf::Sprite
+	#attentionText : sf::Text
+	#resultText : sf::Text
+	#targetText : sf::Text
+	+{static} loadTextures() : sf::Texture
+	+ : sf::Texture NumberScene::bgTexture
+	#butNumber : size_t
+	+getButNumber() : size_t {query}
+	#{static} _imageName : static const std::string
+	#{static} bgTexture : static sf::Texture
+	+operator<<(std::ostream& stream, NumberScene& ns) : std :: ostream&
+	#numberButtons : std::vector<NumberButton>
+	#operationButtons : std::vector<OperationButton*>
+	+generateRandomNumbers(size_t count) : std::vector<int>
+	#numbers : std::vector<int>
+	#poss_num : std::vector<int>
+	+ActionClickCheck(sf::Vector2f mousePos) : void
+	+AddNumberButton(int nb) : void
+	+NumberClickCheck(sf::Vector2f mousePos) : void
+	+OnClick(sf::Event event) : void
+	+OperationClickCheck(sf::Vector2f mousePos) : void
+	+RemoveNumberButtons(size_t butNum) : void
+	+ResetCptButton() : void
+	+UpdateWindow(sf::RenderWindow& window) : void
+}
+
+
+class OperationButton {
+	+OperationButton(std::string operation, float x, float y, float width, float height, sf::Font& font)
+	#_id : int
+	+compute(NumberButton* a, NumberButton* b) : int
+	+getId() : int {query}
+	#{static} _cpt_id : static int
+	+getOperation() : std::string {query}
+	#operation : std::string
+	+draw(sf::RenderWindow& window) : void
+	+setGlobalId(int gid) : void {query}
+	+setState(short a) : void
+}
+
+
+class Scene {
+	+Scene()
+	#globalFont : sf::Font
+}
+
+
+class StartScene {
+	+StartScene(sf::RenderWindow& window)
+	+MainMenu(sf::RenderWindow& window) : bool
+	+OnClick(sf::Event event) : int
+	#sprite : sf::Sprite
+	+{static} loadTextures() : sf::Texture
+	#{static} _imageName : static const std::string
+	#{static} bgTexture : static sf::Texture
+	#modeButtons : std::vector<ActionButton>
+	+UpdateWindow(sf::RenderWindow& window) : void
+}
+
+
+class SubstractionButton {
+	+SubstractionButton(float x, float y, float width, float height, sf::Font& font)
+	+compute(NumberButton* a, NumberButton* b) : int
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+Button <|-- ActionButton
+
+
+Button <|-- NumberButton
+
+
+Button <|-- OperationButton
+
+
+OperationButton <|-- AdditionButton
+
+
+OperationButton <|-- DivisionButton
+
+
+OperationButton <|-- MultiplicationButton
+
+
+OperationButton <|-- SubstractionButton
+
+
+Scene <|-- EndScene
+
+
+Scene <|-- NumberScene
+
+
+Scene <|-- StartScene
+
+
+
+
+
+/' Aggregation relationships '/
+
+NumberScene "16" *-- ActionButton
+
+
+NumberScene *-- NumberButton
+
+
+NumberScene o-- OperationButton
+
+
+StartScene *-- ActionButton
+
+
+
+
+
+
+/' Nested objects '/
+
+
+
+@enduml

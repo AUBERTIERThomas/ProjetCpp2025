@@ -30,7 +30,7 @@ class EndScene : public Scene {
 };
 
 const std::vector<std::string> EndScene::imageNames = {"incroyable.png","glad.jpg","I_am_VERY_disappointed.png","tables_multi.png"}; // contient les potentielles images affichées sur la scène de fin
-const std::map<std::string,std::tuple<int,int,float>> EndScene::imageData = {{imageNames[0],{250,100,1.0f}}, {imageNames[1],{208,100,2.0f}}, {imageNames[2],{144,0,1.0f}}, {imageNames[3],{200,100,0.5f}}};
+const std::map<std::string,std::tuple<int,int,float>> EndScene::imageData = {{imageNames[0],{250,140,1.0f}}, {imageNames[1],{208,100,2.0f}}, {imageNames[2],{144,0,1.0f}}, {imageNames[3],{200,100,0.5f}}};
 
 EndScene::EndScene(int score, sf::RenderWindow& window) {
 	if (!score) {imageId = 0; window.clear(sf::Color::Green);}
@@ -40,7 +40,7 @@ EndScene::EndScene(int score, sf::RenderWindow& window) {
 	_imageName = imageNames[imageId];
 	
 	scoreText = sf::Text("SCORE : " + std::to_string(score), globalFont, 40);
-	scoreText.setPosition(250, 50); // Centrer
+	scoreText.setPosition(280-6*std::to_string(score).length(), 50); // Centrer
 	scoreText.setFillColor(sf::Color::Black);
 	window.draw(scoreText);
 	

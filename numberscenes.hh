@@ -42,7 +42,7 @@ class NumberScene : public Scene {
     	bool fin;
 		
 	public:
-		NumberScene(size_t num, sf::RenderWindow& win);
+		NumberScene(size_t num, sf::RenderWindow& window);
 		/*------------------------------------------*/
 		static sf::Texture loadTextures() {
 			sf::Texture t;
