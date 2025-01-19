@@ -54,7 +54,7 @@ class NumberScene : public Scene {
 		/*------------------------------------------*/
 		size_t getButNumber() const {return numberButtons.size();}
 		/*------------------------------------------*/
-		std::vector<int> generateRandomNumbers(size_t count, size_t min, size_t max);
+		std::vector<int> generateRandomNumbers(size_t count);
 		/*------------------------------------------*/
 		void AddNumberButton(int nb); // Mise en fin de liste du nouveau bouton.
 		void RemoveNumberButtons(size_t butNum); // Retire le dernier bouton jusqu'à ce qu'il en reste butNum
@@ -80,7 +80,7 @@ sf::Texture NumberScene::bgTexture = loadTextures();
 NumberScene::NumberScene(size_t num, sf::RenderWindow& window) {
 	butNumber = num;
 	poss_num = {1,2,3,4,5,6,7,8,9,10,15,25,50,100}; //Liste des nombres pouvant tomber
-    numbers = this->generateRandomNumbers(butNumber, 1, 100); // NVALEUR : entre 1 et 14
+    numbers = this->generateRandomNumbers(butNumber); // butNumber = 5,6,7 ou 8 correspondant au nombre de boutons de nombre choisi dans le menu
 
     for (size_t i = 0; i < butNumber; ++i) numberButtons.emplace_back(numbers[i], 50 + (i%6) * 120, 200 + (i/6)*75, 100, 50, globalFont); // 6 boutons max par rangée
     
@@ -122,7 +122,7 @@ std::ostream& operator<< (std::ostream& stream, NumberScene& ns) {
 	return stream;
 }
 
-std::vector<int> NumberScene::generateRandomNumbers(size_t count, size_t min, size_t max) { 
+std::vector<int> NumberScene::generateRandomNumbers(size_t count) { 
     int i;
     while (numbers.size() < count) {
         i = rand()%poss_num.size();
@@ -187,7 +187,7 @@ void NumberScene::ActionClickCheck(sf::Vector2f mousePos) {
 	if (validateButton.isClicked(mousePos)) {
 		fin = true; // Valider = fin du jeu
         if (currentResult == -1) score = -1;
-    	else score = abs(target-currentResult);
+    	else score = abs(target-currentResult); // le score correspond à la différence entre l'objectif et la valeur obtenue, l'objectif est d'avoir le score le plus proche de 0
     }
 
     /* Tout réinitialiser */

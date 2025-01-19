@@ -12,7 +12,7 @@
 //#include "numberscenes.hh"
 #include "startscenes.hh"
 
-#define NVALEUR 6
+//#define NVALEUR 6 // Permettait de définir le nombre de boutons de nombre dans le jeu
 
 int main() {
 	

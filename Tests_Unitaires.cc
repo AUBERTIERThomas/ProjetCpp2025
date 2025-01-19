@@ -16,7 +16,7 @@ void CHECK(bool cond) {
 	std::cout << "."; // Un point est affiché par nombre de test passé pour chaque section
 }
 
-/* TestCase fait maison. Pas soucis de ressemblance, on utilise une fonction CHECK mais le vrai test est fait via un assert. */
+/* TestCase fait maison. Par soucis de ressemblance, on utilise une fonction CHECK mais le vrai test est fait via un assert. */
 int main() {
 
 	std::cout << "--------------------------------------------" << std::endl;
@@ -75,7 +75,7 @@ int main() {
 	
 	std::cout << "--------------------------------------------" << std::endl;
 	std::cout << "4: Scène finale" << std::endl << "   ";
-	
+	// Vérifie si l'image affichée concorde bien avec le score
 	EndScene es_1(0, window);
 	EndScene es_2(5, window);
 	EndScene es_3(20, window);

@@ -25,7 +25,7 @@ class Button {
 		short getState() const {return _state;}
 };
 
-Button::Button(const std::string& label, float x, float y, float width, float height, sf::Font& font) { // Pour font SFML n'autorise pas la copie !
+Button::Button(const std::string& label, float x, float y, float width, float height, sf::Font& font) { // Pour font, SFML n'autorise pas la copie !
 	/* Rectangle (forme du bouton) */
 	shape.setSize(sf::Vector2f(width, height));
 	shape.setPosition(x, y);
@@ -37,7 +37,7 @@ Button::Button(const std::string& label, float x, float y, float width, float he
 	text.setCharacterSize(20);
 	text.setFillColor(sf::Color::White);
 	
-	/* Par défaut, un bouton comment à l'état 0 (non activé) */    
+	/* Par défaut, un bouton commence à l'état 0 (non activé) */    
 	_state = 0;
 }
 

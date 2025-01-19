@@ -99,10 +99,10 @@ bool StartScene::MainMenu(sf::RenderWindow& window) {
 			if (event.type == sf::Event::Closed) window.close();
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         		size_t id = OnClick(event); // On regarde si un bouton a été appuyé (et lequel)
-        		if (id) { // Si l'un des bouton est appuyé, on charge une partie avec les paramètres choisis
+        		if (id) { // Si l'un des boutons est appuyé, on charge une partie avec les paramètres choisis
         			bool replay = true;
         			while (replay) { // Tant que le joueur veut rejouer avec les mêmes paramètres
-        				NumberScene ns(9-id, window);
+        				NumberScene ns(9-id, window); // 9-id correspond au nombre de boutons
         				replay = ns.NumberGame(window);
         			}
         			return true; // Retour au menu

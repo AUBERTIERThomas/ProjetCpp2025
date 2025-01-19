@@ -12,7 +12,7 @@
 
 class ActionButton : public Button {
 	protected:
-		static const std::vector<std::string> imageNames; // Liste des images pouvant être appliqué au bouton
+		static const std::vector<std::string> imageNames; // Vecteur contenant des images pouvant être appliqués aux boutons
 		static std::vector<sf::Texture> textureList; // Les textures sont en static pour ne pas les charger plusieurs fois (très coûteux !)
 		sf::Sprite sprite;
 		
@@ -45,7 +45,7 @@ class ActionButton : public Button {
 const std::vector<std::string> ActionButton::imageNames = {"CPP_button3.png","CPP_button3b.png"};
 std::vector<sf::Texture> ActionButton::textureList = ActionButton::loadTextures(); // Effectue l'opération qu'une seule fois
 
-bool ActionButton::isClicked(const sf::Vector2f& mousePos) { // La redéfinition de isClicked sert à ignorer l'état (ce bouton ne s'en sert pas)
+bool ActionButton::isClicked(const sf::Vector2f& mousePos) { // La redéfinition de isClicked sert à ignorer l'état (ce type de bouton ne s'en sert pas)
 	if (getState())
 		return 0;
 	if (shape.getGlobalBounds().contains(mousePos)){
